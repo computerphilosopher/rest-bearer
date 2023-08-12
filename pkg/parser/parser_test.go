@@ -27,3 +27,12 @@ func TestLocationParser(t *testing.T) {
 	assert.Equal("src/main/java/net/spy/memcached/ArcusClientPool.java", location.Path)
 	assert.Equal(76, location.Line)
 }
+
+func TestSnippetParser(t *testing.T) {
+	line := "137     md5.update(KeyUtil.getKeyBytes(k));"
+	assert := assert.New(t)
+
+	snippet, err := parser.ParseSnippet(line)
+	assert.Nil(err)
+	assert.Equal(snippet, "md5.update(KeyUtil.getKeyBytes(k));")
+}

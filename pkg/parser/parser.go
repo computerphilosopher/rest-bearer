@@ -119,3 +119,12 @@ func ParseLocation(raw string) (Location, error) {
 		Line: line,
 	}, nil
 }
+
+func ParseSnippet(raw string) (string, error) {
+	splitByColon := strings.SplitN(raw, " ", 2)
+	if len(splitByColon) < 2 {
+		return "", errors.New("unexpected snippet format")
+	}
+
+	return strings.TrimSpace(splitByColon[1]), nil
+}
