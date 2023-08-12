@@ -9,6 +9,7 @@ import (
 
 func TestMetaInfoParser(t *testing.T) {
 	assert := assert.New(t)
+
 	line := "MEDIUM: Insufficiently random value detected. [CWE-330]"
 	metaInfo, err := parser.ParseMetaInfo(line)
 
@@ -19,8 +20,9 @@ func TestMetaInfoParser(t *testing.T) {
 }
 
 func TestLocationParser(t *testing.T) {
-	line := "File: src/main/java/net/spy/memcached/ArcusClientPool.java:76"
 	assert := assert.New(t)
+
+	line := "File: src/main/java/net/spy/memcached/ArcusClientPool.java:76"
 	location, err := parser.ParseLocation(line)
 
 	assert.Nil(err)
@@ -29,10 +31,11 @@ func TestLocationParser(t *testing.T) {
 }
 
 func TestSnippetParser(t *testing.T) {
-	line := "137     md5.update(KeyUtil.getKeyBytes(k));"
 	assert := assert.New(t)
 
+	line := "137     md5.update(KeyUtil.getKeyBytes(k));"
 	snippet, err := parser.ParseSnippet(line)
+
 	assert.Nil(err)
 	assert.Equal(snippet, "md5.update(KeyUtil.getKeyBytes(k));")
 }
