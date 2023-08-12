@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestHelloWorld(t *testing.T) {
+func TestVulnerabilityParser(t *testing.T) {
 	assert := assert.New(t)
 	line := "MEDIUM: Insufficiently random value detected. [CWE-330]"
 	vulnerability, err := parser.ParseVulnerability(line)
