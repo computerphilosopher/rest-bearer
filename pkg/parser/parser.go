@@ -14,7 +14,7 @@ const (
 	Critical
 )
 
-type Vulnerability struct {
+type MetaInfo struct {
 	Severity    int
 	Description string
 	Code        string
@@ -63,24 +63,24 @@ func parseDescriptionAndCode(raw string) (string, string, error) {
 	return description, code, nil
 }
 
-func ParseVulnerability(line string) (Vulnerability, error) {
+func ParseMetaInfo(line string) (MetaInfo, error) {
 
 	splitByColon := strings.Split(line, ":")
 	if len(splitByColon) < 2 {
-		return Vulnerability{}, errors.New("unexpected vulnerability format")
+		return MetaInfo{}, errors.New("unexpected vulnerability format")
 	}
 
 	severity, err := parseSeverity(splitByColon[0])
 	if err != nil {
-		return Vulnerability{}, err
+		return MetaInfo{}, err
 	}
 
 	description, code, err := parseDescriptionAndCode(splitByColon[1])
 	if err != nil {
-		return Vulnerability{}, err
+		return MetaInfo{}, err
 	}
 
-	return Vulnerability{
+	return MetaInfo{
 		Severity:    severity,
 		Description: description,
 		Code:        code,
