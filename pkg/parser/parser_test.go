@@ -17,3 +17,13 @@ func TestMetaInfoParser(t *testing.T) {
 	assert.Equal("CWE-330", metaInfo.Code)
 	assert.Equal("Insufficiently random value detected.", metaInfo.Description)
 }
+
+func TestLocationParser(t *testing.T) {
+	line := "File: src/main/java/net/spy/memcached/ArcusClientPool.java:76"
+	assert := assert.New(t)
+	location, err := parser.ParseLocation(line)
+
+	assert.Nil(err)
+	assert.Equal("src/main/java/net/spy/memcached/ArcusClientPool.java", location.Path)
+	assert.Equal(76, location.Line)
+}

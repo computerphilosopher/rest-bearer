@@ -3,6 +3,7 @@ package parser
 import (
 	"errors"
 	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -84,5 +85,37 @@ func ParseMetaInfo(line string) (MetaInfo, error) {
 		Severity:    severity,
 		Description: description,
 		Code:        code,
+	}, nil
+}
+
+type Location struct {
+	Path string
+	Line int
+}
+
+func ParseLocation(raw string) (Location, error) {
+
+	splitByColon := strings.SplitN(raw, ":", 2)
+	if len(splitByColon) < 2 {
+		return Location{}, errors.New("unexpected location format")
+	}
+
+	pathAndLine := strings.TrimSpace(splitByColon[1])
+	lastColon, err := lastIndex(pathAndLine, ':')
+	if err != nil {
+		return Location{}, err
+	}
+
+	path := pathAndLine[:lastColon]
+
+	lineRaw := pathAndLine[lastColon+1:]
+	line, err := strconv.Atoi(lineRaw)
+	if err != nil {
+		return Location{}, err
+	}
+
+	return Location{
+		Path: path,
+		Line: line,
 	}, nil
 }
