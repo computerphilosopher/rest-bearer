@@ -66,7 +66,7 @@ func parseDescriptionAndCode(raw string) (string, string, error) {
 
 func ParseMetaInfo(line string) (MetaInfo, error) {
 
-	splitByColon := strings.SplitN(line, ":", 1)
+	splitByColon := strings.SplitN(line, ":", 2)
 	if len(splitByColon) < 2 {
 		return MetaInfo{}, errors.New("unexpected vulnerability format")
 	}
