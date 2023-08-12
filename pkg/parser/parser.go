@@ -20,6 +20,15 @@ type Vulnerability struct {
 	Code        string
 }
 
+func lastIndex(str string, toFind byte) (int, error) {
+	for i := len(str) - 1; i > 0; i-- {
+		if str[i] == toFind {
+			return i, nil
+		}
+	}
+	return -1, fmt.Errorf("cannot find %s from from \"%s\"", string(toFind), str)
+}
+
 func parseSeverity(raw string) (int, error) {
 	severityMap := map[string]int{
 		"LOW":      Low,
@@ -40,15 +49,8 @@ func parseDescriptionAndCode(raw string) (string, string, error) {
 	if raw[len(raw)-1] != ']' {
 		return "", "", fmt.Errorf("\"%s\"does not end with ']'", raw)
 	}
-	bracketStart, err := func() (int, error) {
-		for i := len(raw) - 1; i > 0; i-- {
-			if raw[i] == '[' {
-				return i, nil
-			}
-		}
-		return -1, fmt.Errorf("cannot find starting bracket from \"%s\"", raw)
-	}()
 
+	bracketStart, err := lastIndex(raw, '[')
 	if err != nil {
 		return "", "", err
 	}
