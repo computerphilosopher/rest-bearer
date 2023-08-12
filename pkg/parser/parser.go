@@ -7,16 +7,8 @@ import (
 	"strings"
 )
 
-const (
-	Low = iota
-	Medium
-	High
-	Warning
-	Critical
-)
-
 type MetaInfo struct {
-	Severity    int
+	Severity    string
 	Description string
 	Code        string
 }
@@ -28,22 +20,6 @@ func lastIndex(str string, toFind byte) (int, error) {
 		}
 	}
 	return -1, fmt.Errorf("cannot find %s from from \"%s\"", string(toFind), str)
-}
-
-func parseSeverity(raw string) (int, error) {
-	severityMap := map[string]int{
-		"LOW":      Low,
-		"MEDIUM":   Medium,
-		"High":     High,
-		"Warning":  Warning,
-		"Critical": Critical,
-	}
-
-	if _, exist := severityMap[raw]; !exist {
-		return -1, fmt.Errorf("severity level %s is not exist", raw)
-	}
-
-	return severityMap[raw], nil
 }
 
 func parseDescriptionAndCode(raw string) (string, string, error) {
@@ -71,11 +47,7 @@ func ParseMetaInfo(line string) (MetaInfo, error) {
 		return MetaInfo{}, errors.New("unexpected vulnerability format")
 	}
 
-	severity, err := parseSeverity(splitByColon[0])
-	if err != nil {
-		return MetaInfo{}, err
-	}
-
+	severity := strings.TrimSpace(splitByColon[0])
 	description, code, err := parseDescriptionAndCode(splitByColon[1])
 	if err != nil {
 		return MetaInfo{}, err

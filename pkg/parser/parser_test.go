@@ -13,7 +13,7 @@ func TestMetaInfoParser(t *testing.T) {
 	metaInfo, err := parser.ParseMetaInfo(line)
 
 	assert.Nil(err)
-	assert.Equal(parser.Medium, metaInfo.Severity)
+	assert.Equal("MEDIUM", metaInfo.Severity)
 	assert.Equal("CWE-330", metaInfo.Code)
 	assert.Equal("Insufficiently random value detected.", metaInfo.Description)
 }
