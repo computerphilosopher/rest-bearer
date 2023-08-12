@@ -1,0 +1,58 @@
+
+
+Security Report
+
+=====================================
+
+Rules: 
+https://docs.bearer.com/reference/rules []
+
+Language  Default Rules  Custom Rules  Files  
+Java      28             0             493    
+
+
+MEDIUM: Insufficiently random value detected. [CWE-330]
+https://docs.bearer.com/reference/rules/java_lang_insufficiently_random_values
+To exclude this finding, use the flag --exclude-fingerprint=05ba7d67a612d13d1c75f296520b8e6f_0
+
+File: src/main/java/net/spy/memcached/ArcusClientPool.java:76
+
+ 76     return client[rand.nextInt(poolSize)];
+
+MEDIUM: Weak hashing library (MD5) detected [CWE-327]
+https://docs.bearer.com/reference/rules/java_lang_weak_hash_md5
+To exclude this finding, use the flag --exclude-fingerprint=ac5e6745ec2c9df7999b03871b5a641b_0
+
+File: src/main/java/net/spy/memcached/HashAlgorithm.java:137
+
+ 137     md5.update(KeyUtil.getKeyBytes(k));
+
+WARNING: Possible information leakage detected. [CWE-209]
+https://docs.bearer.com/reference/rules/java_lang_information_leakage
+To exclude this finding, use the flag --exclude-fingerprint=951a5185e0c7b3300c07584866b288de_0
+
+File: src/main/java/net/spy/memcached/ArcusReplNodeAddress.java:102
+
+ 102         e.printStackTrace();
+
+WARNING: Possible information leakage detected. [CWE-209]
+https://docs.bearer.com/reference/rules/java_lang_information_leakage
+To exclude this finding, use the flag --exclude-fingerprint=83cc1bb880e001dc6ffbe609581d7e61_0
+
+File: src/main/java/net/spy/memcached/compat/log/DefaultLogger.java:83
+
+ 83         e.printStackTrace();
+=====================================
+
+28 checks, 4 findings
+
+CRITICAL: 0
+HIGH: 0
+MEDIUM: 2 (CWE-327, CWE-330)
+LOW: 0
+WARNING: 2 (CWE-209)
+
+Need help or want to discuss the output? Join the Community https://discord.gg/eaHZBJUXRF
+
+Manage your findings directly on Bearer Cloud. Start now for free https://my.bearer.sh/users/sign_up or learn more https://docs.bearer.com/guides/bearer-cloud/
+
