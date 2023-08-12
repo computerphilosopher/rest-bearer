@@ -67,7 +67,7 @@ func ParseVulnerability(line string) (Vulnerability, error) {
 
 	splitByColon := strings.Split(line, ":")
 	if len(splitByColon) < 2 {
-		return Vulnerability{}, errors.New("line format is wrong")
+		return Vulnerability{}, errors.New("unexpected vulnerability format")
 	}
 
 	severity, err := parseSeverity(splitByColon[0])
