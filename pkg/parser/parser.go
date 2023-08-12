@@ -46,7 +46,7 @@ func parseDescriptionAndCode(raw string) (string, string, error) {
 				return i, nil
 			}
 		}
-		return -1, errors.New("cannot find starting bracket")
+		return -1, fmt.Errorf("cannot find starting bracket from \"%s\"", raw)
 	}()
 
 	if err != nil {
