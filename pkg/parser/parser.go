@@ -48,6 +48,7 @@ func ParseMetaInfo(line string) (MetaInfo, error) {
 	}
 
 	severity := strings.TrimSpace(splitByColon[0])
+
 	description, code, err := parseDescriptionAndCode(splitByColon[1])
 	if err != nil {
 		return MetaInfo{}, err
@@ -69,7 +70,7 @@ func ParseLocation(raw string) (Location, error) {
 
 	splitByColon := strings.SplitN(raw, ":", 2)
 	if len(splitByColon) < 2 {
-		return Location{}, errors.New("unexpected location format")
+		return Location{}, fmt.Errorf("unexpected location format: \"%s\"", raw)
 	}
 
 	pathAndLine := strings.TrimSpace(splitByColon[1])
