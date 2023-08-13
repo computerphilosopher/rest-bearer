@@ -94,10 +94,46 @@ func ParseLocation(raw string) (Location, error) {
 }
 
 func ParseSnippet(raw string) (string, error) {
-	splitByColon := strings.SplitN(raw, " ", 2)
+	splitByColon := strings.SplitN(strings.TrimSpace(raw), " ", 2)
 	if len(splitByColon) < 2 {
 		return "", errors.New("unexpected snippet format")
 	}
 
 	return strings.TrimSpace(splitByColon[1]), nil
+}
+
+type Vulnerability struct {
+	MetaInfo  MetaInfo
+	Location  Location
+	Reference string
+	Snippet   string
+}
+
+func ParseVulnerability(lines []string, start int) (Vulnerability, int, error) {
+	metaInfo, err := ParseMetaInfo(lines[start])
+	if err != nil {
+		return Vulnerability{}, -1, err
+	}
+	reference := lines[start+1]
+	if !strings.Contains(reference, "http") {
+		return Vulnerability{}, -1,
+			fmt.Errorf("refernce string \"%s\" is not URL", reference)
+	}
+
+	//lines[start+2] == "To exclude this finding, use the flag --exclude-fingerprint=xxxxxx"
+	location, err := ParseLocation(lines[start+3])
+	if err != nil {
+		return Vulnerability{}, -1, err
+	}
+	snippet, err := ParseSnippet(lines[start+4])
+	if err != nil {
+		return Vulnerability{}, -1, err
+	}
+
+	return Vulnerability{
+		MetaInfo:  metaInfo,
+		Location:  location,
+		Reference: reference,
+		Snippet:   snippet,
+	}, start + 5, nil
 }
