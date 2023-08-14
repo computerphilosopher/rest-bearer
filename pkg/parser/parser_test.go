@@ -1,6 +1,9 @@
 package parser_test
 
 import (
+	"io/ioutil"
+	"path/filepath"
+	"runtime"
 	"testing"
 
 	"github.com/computerphilosopher/rest-bearer/pkg/parser"
@@ -70,4 +73,36 @@ func TestVulnerabilityParser(t *testing.T) {
 	assert.Equal(expected, actual)
 	assert.Equal(next, 5)
 
+}
+
+func fileToString(relativePath string) (string, error) {
+
+	_, filename, _, _ := runtime.Caller(0)
+	dir := filepath.Dir(filename)
+
+	testFilePath := filepath.Join(dir, relativePath)
+
+	bytes, err := ioutil.ReadFile(testFilePath)
+	if err != nil {
+		return "", err
+	}
+	return string(bytes), nil
+}
+
+func TestParseReport(t *testing.T) {
+	assert := assert.New(t)
+
+	content, err := fileToString("test.txt")
+	assert.Nil(err)
+
+	report, err := parser.ParseReport(content)
+	assert.Nil(err)
+	assert.Equal(4, len(report))
+
+	content, err = fileToString("success.txt")
+	assert.Nil(err)
+
+	report, err = parser.ParseReport(content)
+	assert.Nil(err)
+	assert.Zero(len(report))
 }

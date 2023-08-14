@@ -138,3 +138,58 @@ func ParseVulnerability(lines []string, start int) (Vulnerability, int, error) {
 		Snippet:   snippet,
 	}, start + 5, nil
 }
+
+func ParseReport(raw string) ([]Vulnerability, error) {
+	emptyLineRemoved := strings.Replace(raw, "\n\n", "\n", -1)
+	lines := strings.Split(emptyLineRemoved, "\n")
+
+	reportEnded := func(line string) bool {
+		if strings.Contains(line, "checks") &&
+			strings.Contains(line, "findings") {
+			return true
+		}
+		return strings.Contains(line, "SUCCESS")
+	}
+
+	isMetaInfoLine := func(line string) bool {
+		severities := map[string]bool{
+			"CRITICAL": true,
+			"HIGH":     true,
+			"MEDIUM":   true,
+			"LOW":      true,
+			"WARNING":  true,
+		}
+		splitByColon := strings.SplitN(line, ":", 2)
+		if len(splitByColon) < 2 {
+			return false
+		}
+		maybeSeverity := strings.TrimSpace(splitByColon[0])
+		if _, exist := severities[maybeSeverity]; !exist {
+			return false
+		}
+		return true
+	}
+
+	i := 0
+	report := []Vulnerability{}
+	for i < len(lines) {
+		if reportEnded(lines[i]) {
+			break
+		}
+		if !isMetaInfoLine(lines[i]) {
+			i++
+			continue
+		}
+
+		vulnerability, next, err := ParseVulnerability(lines, i)
+		if err != nil {
+			return []Vulnerability{}, err
+		}
+		report = append(report, vulnerability)
+		i = next
+	}
+
+	fmt.Printf("%+v\n", report)
+
+	return report, nil
+}
