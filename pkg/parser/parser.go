@@ -120,6 +120,7 @@ func ParseVulnerability(lines []string, start int) (Vulnerability, int, error) {
 			fmt.Errorf("refernce string \"%s\" is not URL", reference)
 	}
 
+	//skip lines[start+2]
 	//lines[start+2] == "To exclude this finding, use the flag --exclude-fingerprint=xxxxxx"
 	location, err := ParseLocation(lines[start+3])
 	if err != nil {
