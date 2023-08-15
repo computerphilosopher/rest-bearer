@@ -1,0 +1,28 @@
+
+
+Security Report
+
+=====================================
+
+Rules: 
+https://docs.bearer.com/reference/rules []
+
+Language  Default Rules  Custom Rules  Files  
+Java      28             0             91     
+
+Need to add your own custom rule? Check out the guide: https://docs.bearer.com/guides/custom-rule
+
+=====================================
+
+SUCCESS
+
+28 checks were run and no failures were detected. Great job! 👏
+
+Bearer found:
+- 4 unique data type(s), representing 16 occurrences, including PII, Personal Data.
+- 2 external service(s).
+
+Need help or want to discuss the output? Join the Community https://discord.gg/eaHZBJUXRF
+
+Manage your findings directly on Bearer Cloud. Start now for free https://my.bearer.sh/users/sign_up or learn more https://docs.bearer.com/guides/bearer-cloud/
+
