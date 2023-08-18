@@ -1,4 +1,4 @@
-package parser
+package report
 
 import (
 	"errors"
