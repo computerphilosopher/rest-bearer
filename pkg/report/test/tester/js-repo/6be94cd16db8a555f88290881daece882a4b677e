@@ -1,0 +1,465 @@
+
+
+Security Report
+
+=====================================
+
+Rules: 
+https://docs.bearer.com/reference/rules [v0.18.1]
+
+Language    Default Rules  Custom Rules  Files  
+JavaScript  72             0             15     
+
+
+HIGH: Hard-coded secret detected. [CWE-798]
+https://docs.bearer.com/reference/rules/javascript_express_hardcoded_secret
+To exclude this finding, use the flag --exclude-fingerprint=c095a5cc1948bae67c38b5c5d85eb4f4_0
+
+File: lib/insecurity.ts:56
+
+ 56 export const authorize = (user = {}) => jwt.sign(user, privateKey, { expiresIn: '6h', algorithm: 'RS256' })
+
+HIGH: Possible path traversal vulnerability detected. [CWE-22]
+https://docs.bearer.com/reference/rules/javascript_express_path_traversal
+To exclude this finding, use the flag --exclude-fingerprint=730d1c5106516470d1853a35c4aca01b_0
+
+File: routes/dataErasure.ts:69
+
+ 69       const filePath: string = path.resolve(req.body.layout).toLowerCase()
+
+HIGH: Possible path traversal vulnerability detected. [CWE-22]
+https://docs.bearer.com/reference/rules/javascript_express_path_traversal
+To exclude this finding, use the flag --exclude-fingerprint=f0fdc8f875e9b77313305edb186aec62_0
+
+File: routes/keyServer.ts:14
+
+ 14       res.sendFile(path.resolve('encryptionkeys/', file))
+
+HIGH: Possible path traversal vulnerability detected. [CWE-22]
+https://docs.bearer.com/reference/rules/javascript_express_path_traversal
+To exclude this finding, use the flag --exclude-fingerprint=51001ae13fdae4f062cec51a842161b2_0
+
+File: routes/logfileServer.ts:14
+
+ 14       res.sendFile(path.resolve('logs/', file))
+
+HIGH: Possible path traversal vulnerability detected. [CWE-22]
+https://docs.bearer.com/reference/rules/javascript_express_path_traversal
+To exclude this finding, use the flag --exclude-fingerprint=a59cb4c55fa6ab0b98f1f061b0262ee1_0
+
+File: routes/quarantineServer.ts:14
+
+ 14       res.sendFile(path.resolve('ftp/quarantine/', file))
+
+HIGH: Dangerous dynamic HTML insert detected. [CWE-79]
+https://docs.bearer.com/reference/rules/javascript_lang_dangerous_insert_html
+To exclude this finding, use the flag --exclude-fingerprint=bf127e52a210d7d5cdb66cacceb977ff_0
+
+File: frontend/src/hacking-instructor/index.ts:107
+
+ 107   textBox.innerHTML = snarkdown(hint.text)
+
+HIGH: Hardcoded secret detected [CWE-798]
+https://docs.bearer.com/reference/rules/javascript_lang_hardcoded_secret
+To exclude this finding, use the flag --exclude-fingerprint=d699b64784f6ca1135369f86e4b64ecb_0
+
+File: lib/insecurity.ts:44
+
+ 44 export const hmac = (data: string) => crypto.createHmac('sha256', 'pa4qacea4VK9t9nGv7yZtwmj').update(data).digest('hex')
+
+HIGH: Hardcoded secret detected [CWE-798]
+https://docs.bearer.com/reference/rules/javascript_lang_hardcoded_secret
+To exclude this finding, use the flag --exclude-fingerprint=d699b64784f6ca1135369f86e4b64ecb_1
+
+File: lib/insecurity.ts:158
+
+ 158   const hmac = crypto.createHmac('sha256', privateKey)
+
+HIGH: HTTP communication with user-controlled destination detected. [CWE-918]
+https://docs.bearer.com/reference/rules/javascript_lang_http_url_using_user_input
+To exclude this finding, use the flag --exclude-fingerprint=8ed612ce6d89f70e214b65244f8793b4_0
+
+File: routes/profileImageUrlUpload.ts:22
+
+ 22         const imageRequest = request
+ 23           .get(url)
+
+HIGH: Hardcoded JWT secret detected [CWE-798]
+https://docs.bearer.com/reference/rules/javascript_lang_jwt_hardcoded_secret
+To exclude this finding, use the flag --exclude-fingerprint=50ebccec98d14333da6adb3b94c79730_0
+
+File: lib/insecurity.ts:56
+
+ 56 export const authorize = (user = {}) => jwt.sign(user, privateKey, { expiresIn: '6h', algorithm: 'RS256' })
+
+HIGH: Sensitive data stored in HTML local storage detected. [CWE-312]
+https://docs.bearer.com/reference/rules/javascript_lang_session
+To exclude this finding, use the flag --exclude-fingerprint=f9657c5f0e228532df66e6987928ea19_0
+
+File: frontend/src/app/login/login.component.ts:102
+
+ 102       localStorage.setItem('email', this.user.email)
+
+HIGH: SQL injection vulnerability detected. [CWE-89]
+https://docs.bearer.com/reference/rules/javascript_lang_sql_injection
+To exclude this finding, use the flag --exclude-fingerprint=2422999ee983c379479a0d13296d2b45_0
+
+File: data/static/codefixes/dbSchemaChallenge_1.ts:5
+
+ 5     models.sequelize.query("SELECT * FROM Products WHERE ((name LIKE '%"+criteria+"%' OR description LIKE '%"+criteria+"%') AND deletedAt IS NULL) ORDER BY name")
+
+HIGH: SQL injection vulnerability detected. [CWE-89]
+https://docs.bearer.com/reference/rules/javascript_lang_sql_injection
+To exclude this finding, use the flag --exclude-fingerprint=8014e30891e8e3cb3c4a378fcf1afa38_0
+
+File: data/static/codefixes/dbSchemaChallenge_3.ts:11
+
+ 11     models.sequelize.query(`SELECT * FROM Products WHERE ((name LIKE '%${criteria}%' OR description LIKE '%${criteria}%') AND deletedAt IS NULL) ORDER BY name`)
+
+HIGH: SQL injection vulnerability detected. [CWE-89]
+https://docs.bearer.com/reference/rules/javascript_lang_sql_injection
+To exclude this finding, use the flag --exclude-fingerprint=e3d18d5f0ca1f301fa884039dc723bf6_0
+
+File: data/static/codefixes/loginAdminChallenge_1.ts:20
+
+ 20     models.sequelize.query(`SELECT * FROM Users WHERE email = '${req.body.email || ''}' AND password = '${security.hash(req.body.password || '')}' AND deletedAt IS NULL`, { model: models.User, plain: true })
+
+HIGH: SQL injection vulnerability detected. [CWE-89]
+https://docs.bearer.com/reference/rules/javascript_lang_sql_injection
+To exclude this finding, use the flag --exclude-fingerprint=4b0883d52334dfd9a4acce2fcf810121_0
+
+File: data/static/codefixes/loginBenderChallenge_1.ts:20
+
+ 20     models.sequelize.query(`SELECT * FROM Users WHERE email = '${req.body.email || ''}' AND password = '${security.hash(req.body.password || '')}' AND deletedAt IS NULL`, { model: models.User, plain: true })
+
+HIGH: SQL injection vulnerability detected. [CWE-89]
+https://docs.bearer.com/reference/rules/javascript_lang_sql_injection
+To exclude this finding, use the flag --exclude-fingerprint=4a25d479d29e305cf7b9b7181f917eb8_0
+
+File: data/static/codefixes/loginBenderChallenge_4.ts:17
+
+ 17     models.sequelize.query(`SELECT * FROM Users WHERE email = '${req.body.email || ''}' AND password = '${security.hash(req.body.password || '')}' AND deletedAt IS NULL`, { model: models.User, plain: false })
+
+HIGH: SQL injection vulnerability detected. [CWE-89]
+https://docs.bearer.com/reference/rules/javascript_lang_sql_injection
+To exclude this finding, use the flag --exclude-fingerprint=df98e54f62e0cc9172446bbd0361c29c_0
+
+File: data/static/codefixes/loginJimChallenge_2.ts:17
+
+ 17     models.sequelize.query(`SELECT * FROM Users WHERE email = '${req.body.email || ''}' AND password = '${security.hash(req.body.password || '')}' AND deletedAt IS NULL`, { model: models.User, plain: false })
+
+HIGH: SQL injection vulnerability detected. [CWE-89]
+https://docs.bearer.com/reference/rules/javascript_lang_sql_injection
+To exclude this finding, use the flag --exclude-fingerprint=1b0805db0c0342c03908f442d4972b13_0
+
+File: data/static/codefixes/loginJimChallenge_4.ts:20
+
+ 20     models.sequelize.query(`SELECT * FROM Users WHERE email = '${req.body.email || ''}' AND password = '${security.hash(req.body.password || '')}' AND deletedAt IS NULL`, { model: models.User, plain: true })
+
+HIGH: SQL injection vulnerability detected. [CWE-89]
+https://docs.bearer.com/reference/rules/javascript_lang_sql_injection
+To exclude this finding, use the flag --exclude-fingerprint=7e9979f44c0dbd99c76619f48c4245fa_0
+
+File: data/static/codefixes/unionSqlInjectionChallenge_1.ts:6
+
+ 6     models.sequelize.query(`SELECT * FROM Products WHERE ((name LIKE '%${criteria}%' OR description LIKE '%${criteria}%') AND deletedAt IS NULL) ORDER BY name`)
+
+HIGH: SQL injection vulnerability detected. [CWE-89]
+https://docs.bearer.com/reference/rules/javascript_lang_sql_injection
+To exclude this finding, use the flag --exclude-fingerprint=d6273bb4e3195d87ba54a7ca10db72be_0
+
+File: data/static/codefixes/unionSqlInjectionChallenge_3.ts:10
+
+ 10     models.sequelize.query(`SELECT * FROM Products WHERE ((name LIKE '%${criteria}%' OR description LIKE '%${criteria}%') AND deletedAt IS NULL) ORDER BY name`)
+
+HIGH: SQL injection vulnerability detected. [CWE-89]
+https://docs.bearer.com/reference/rules/javascript_lang_sql_injection
+To exclude this finding, use the flag --exclude-fingerprint=1c2a6e42ca5adc2c078fee1a7cb1a787_0
+
+File: routes/login.ts:36
+
+ 36     models.sequelize.query(`SELECT * FROM Users WHERE email = '${req.body.email || ''}' AND password = '${security.hash(req.body.password || '')}' AND deletedAt IS NULL`, { model: UserModel, plain: true }) // vuln-code-snippet vuln-line loginAdminChallenge loginBenderChallenge loginJimChallenge
+
+HIGH: SQL injection vulnerability detected. [CWE-89]
+https://docs.bearer.com/reference/rules/javascript_lang_sql_injection
+To exclude this finding, use the flag --exclude-fingerprint=626e8a24818faf605935d6ca0f0f748f_0
+
+File: routes/search.ts:23
+
+ 23     models.sequelize.query(`SELECT * FROM Products WHERE ((name LIKE '%${criteria}%' OR description LIKE '%${criteria}%') AND deletedAt IS NULL) ORDER BY name`) // vuln-code-snippet vuln-line unionSqlInjectionChallenge dbSchemaChallenge
+
+MEDIUM: Missing access restriction to directory listing detected. [CWE-548]
+https://docs.bearer.com/reference/rules/javascript_express_exposed_dir_listing
+To exclude this finding, use the flag --exclude-fingerprint=f561fa26365b6c05e91ddc3b18fbed28_0
+
+File: data/static/codefixes/accessLogDisclosureChallenge_1_correct.ts:2
+
+ 2   app.use('/ftp', serveIndexMiddleware, serveIndex('ftp', { icons: true }))
+
+MEDIUM: Missing access restriction to directory listing detected. [CWE-548]
+https://docs.bearer.com/reference/rules/javascript_express_exposed_dir_listing
+To exclude this finding, use the flag --exclude-fingerprint=f561fa26365b6c05e91ddc3b18fbed28_1
+
+File: data/static/codefixes/accessLogDisclosureChallenge_1_correct.ts:7
+
+ 7   app.use('/encryptionkeys', serveIndexMiddleware, serveIndex('encryptionkeys', { icons: true, view: 'details' }))
+
+MEDIUM: Missing access restriction to directory listing detected. [CWE-548]
+https://docs.bearer.com/reference/rules/javascript_express_exposed_dir_listing
+To exclude this finding, use the flag --exclude-fingerprint=7431053925541a9e4feb79b7adbba3a3_0
+
+File: data/static/codefixes/accessLogDisclosureChallenge_2.ts:2
+
+ 2   app.use('/ftp', serveIndexMiddleware, serveIndex('ftp', { icons: true }))
+
+MEDIUM: Missing access restriction to directory listing detected. [CWE-548]
+https://docs.bearer.com/reference/rules/javascript_express_exposed_dir_listing
+To exclude this finding, use the flag --exclude-fingerprint=7431053925541a9e4feb79b7adbba3a3_1
+
+File: data/static/codefixes/accessLogDisclosureChallenge_2.ts:7
+
+ 7   app.use('/encryptionkeys', serveIndexMiddleware, serveIndex('encryptionkeys', { icons: true, view: 'details' }))
+
+MEDIUM: Missing access restriction to directory listing detected. [CWE-548]
+https://docs.bearer.com/reference/rules/javascript_express_exposed_dir_listing
+To exclude this finding, use the flag --exclude-fingerprint=7431053925541a9e4feb79b7adbba3a3_2
+
+File: data/static/codefixes/accessLogDisclosureChallenge_2.ts:11
+
+ 11   app.use('/support/logs', serveIndexMiddleware, serveIndex('logs', { icons: true }))
+
+MEDIUM: Missing access restriction to directory listing detected. [CWE-548]
+https://docs.bearer.com/reference/rules/javascript_express_exposed_dir_listing
+To exclude this finding, use the flag --exclude-fingerprint=1bde540dc2dc7eadc0a5563ef8d50744_0
+
+File: data/static/codefixes/accessLogDisclosureChallenge_3.ts:2
+
+ 2   app.use('/ftp', serveIndexMiddleware, serveIndex('ftp', { icons: true }))
+
+MEDIUM: Missing access restriction to directory listing detected. [CWE-548]
+https://docs.bearer.com/reference/rules/javascript_express_exposed_dir_listing
+To exclude this finding, use the flag --exclude-fingerprint=1bde540dc2dc7eadc0a5563ef8d50744_1
+
+File: data/static/codefixes/accessLogDisclosureChallenge_3.ts:7
+
+ 7   app.use('/encryptionkeys', serveIndexMiddleware, serveIndex('encryptionkeys', { icons: true, view: 'details' }))
+
+MEDIUM: Missing access restriction to directory listing detected. [CWE-548]
+https://docs.bearer.com/reference/rules/javascript_express_exposed_dir_listing
+To exclude this finding, use the flag --exclude-fingerprint=1bde540dc2dc7eadc0a5563ef8d50744_2
+
+File: data/static/codefixes/accessLogDisclosureChallenge_3.ts:11
+
+ 11   app.use('/support/logs', serveIndexMiddleware, serveIndex('logs', { icons: true, view: 'details' }))
+
+MEDIUM: Missing access restriction to directory listing detected. [CWE-548]
+https://docs.bearer.com/reference/rules/javascript_express_exposed_dir_listing
+To exclude this finding, use the flag --exclude-fingerprint=87838e0cadbae4b996ea2ba0ce225f2e_0
+
+File: data/static/codefixes/accessLogDisclosureChallenge_4.ts:2
+
+ 2   app.use('/ftp', serveIndexMiddleware, serveIndex('ftp', { icons: true }))
+
+MEDIUM: Missing access restriction to directory listing detected. [CWE-548]
+https://docs.bearer.com/reference/rules/javascript_express_exposed_dir_listing
+To exclude this finding, use the flag --exclude-fingerprint=87838e0cadbae4b996ea2ba0ce225f2e_1
+
+File: data/static/codefixes/accessLogDisclosureChallenge_4.ts:7
+
+ 7   app.use('/encryptionkeys', serveIndexMiddleware, serveIndex('encryptionkeys', { icons: true, view: 'details' }))
+
+MEDIUM: Missing access restriction to directory listing detected. [CWE-548]
+https://docs.bearer.com/reference/rules/javascript_express_exposed_dir_listing
+To exclude this finding, use the flag --exclude-fingerprint=d0c7f09f2c9927118811b6920976dbde_0
+
+File: data/static/codefixes/directoryListingChallenge_1_correct.ts:2
+
+ 2   app.use('/encryptionkeys', serveIndexMiddleware, serveIndex('encryptionkeys', { icons: true, view: 'details' }))
+
+MEDIUM: Missing access restriction to directory listing detected. [CWE-548]
+https://docs.bearer.com/reference/rules/javascript_express_exposed_dir_listing
+To exclude this finding, use the flag --exclude-fingerprint=d0c7f09f2c9927118811b6920976dbde_1
+
+File: data/static/codefixes/directoryListingChallenge_1_correct.ts:6
+
+ 6   app.use('/support/logs', serveIndexMiddleware, serveIndex('logs', { icons: true, view: 'details' }))
+
+MEDIUM: Missing access restriction to directory listing detected. [CWE-548]
+https://docs.bearer.com/reference/rules/javascript_express_exposed_dir_listing
+To exclude this finding, use the flag --exclude-fingerprint=84a18ba9c67531b0f1271ecfad9a6522_0
+
+File: data/static/codefixes/directoryListingChallenge_2.ts:6
+
+ 6   app.use('/encryptionkeys', serveIndexMiddleware, serveIndex('encryptionkeys', { icons: true, view: 'details' }))
+
+MEDIUM: Missing access restriction to directory listing detected. [CWE-548]
+https://docs.bearer.com/reference/rules/javascript_express_exposed_dir_listing
+To exclude this finding, use the flag --exclude-fingerprint=84a18ba9c67531b0f1271ecfad9a6522_1
+
+File: data/static/codefixes/directoryListingChallenge_2.ts:10
+
+ 10   app.use('/support/logs', serveIndexMiddleware, serveIndex('logs', { icons: true, view: 'details' }))
+
+MEDIUM: Missing access restriction to directory listing detected. [CWE-548]
+https://docs.bearer.com/reference/rules/javascript_express_exposed_dir_listing
+To exclude this finding, use the flag --exclude-fingerprint=8ebcfc95a36b5c20927ea9e466b8715c_0
+
+File: data/static/codefixes/directoryListingChallenge_3.ts:2
+
+ 2   app.use('/ftp', serveIndexMiddleware, serveIndex('ftp', { icons: true }))
+
+MEDIUM: Missing access restriction to directory listing detected. [CWE-548]
+https://docs.bearer.com/reference/rules/javascript_express_exposed_dir_listing
+To exclude this finding, use the flag --exclude-fingerprint=8ebcfc95a36b5c20927ea9e466b8715c_1
+
+File: data/static/codefixes/directoryListingChallenge_3.ts:5
+
+ 5   app.use('/encryptionkeys', serveIndexMiddleware, serveIndex('encryptionkeys', { icons: true, view: 'details' }))
+
+MEDIUM: Missing access restriction to directory listing detected. [CWE-548]
+https://docs.bearer.com/reference/rules/javascript_express_exposed_dir_listing
+To exclude this finding, use the flag --exclude-fingerprint=8ebcfc95a36b5c20927ea9e466b8715c_2
+
+File: data/static/codefixes/directoryListingChallenge_3.ts:9
+
+ 9   app.use('/support/logs', serveIndexMiddleware, serveIndex('logs', { icons: true, view: 'details' }))
+
+MEDIUM: Missing access restriction to directory listing detected. [CWE-548]
+https://docs.bearer.com/reference/rules/javascript_express_exposed_dir_listing
+To exclude this finding, use the flag --exclude-fingerprint=d1d7fd4f95a122aab479067df9323e6c_0
+
+File: data/static/codefixes/directoryListingChallenge_4.ts:2
+
+ 2   app.use('/ftp', serveIndexMiddleware, serveIndex('ftp', { icons: false }))
+
+MEDIUM: Missing access restriction to directory listing detected. [CWE-548]
+https://docs.bearer.com/reference/rules/javascript_express_exposed_dir_listing
+To exclude this finding, use the flag --exclude-fingerprint=d1d7fd4f95a122aab479067df9323e6c_1
+
+File: data/static/codefixes/directoryListingChallenge_4.ts:7
+
+ 7   app.use('/encryptionkeys', serveIndexMiddleware, serveIndex('encryptionkeys', { icons: true, view: 'details' }))
+
+MEDIUM: Missing access restriction to directory listing detected. [CWE-548]
+https://docs.bearer.com/reference/rules/javascript_express_exposed_dir_listing
+To exclude this finding, use the flag --exclude-fingerprint=d1d7fd4f95a122aab479067df9323e6c_2
+
+File: data/static/codefixes/directoryListingChallenge_4.ts:11
+
+ 11   app.use('/support/logs', serveIndexMiddleware, serveIndex('logs', { icons: true, view: 'details' }))
+
+MEDIUM: Missing access restriction to directory listing detected. [CWE-548]
+https://docs.bearer.com/reference/rules/javascript_express_exposed_dir_listing
+To exclude this finding, use the flag --exclude-fingerprint=c539465e8119e4d020831d9f6cf0a973_0
+
+File: server.ts:242
+
+ 242   app.use('/ftp', serveIndexMiddleware, serveIndex('ftp', { icons: true })) // vuln-code-snippet vuln-line directoryListingChallenge
+
+MEDIUM: Missing access restriction to directory listing detected. [CWE-548]
+https://docs.bearer.com/reference/rules/javascript_express_exposed_dir_listing
+To exclude this finding, use the flag --exclude-fingerprint=c539465e8119e4d020831d9f6cf0a973_1
+
+File: server.ts:247
+
+ 247   app.use('/encryptionkeys', serveIndexMiddleware, serveIndex('encryptionkeys', { icons: true, view: 'details' }))
+
+MEDIUM: Missing access restriction to directory listing detected. [CWE-548]
+https://docs.bearer.com/reference/rules/javascript_express_exposed_dir_listing
+To exclude this finding, use the flag --exclude-fingerprint=c539465e8119e4d020831d9f6cf0a973_2
+
+File: server.ts:251
+
+ 251   app.use('/support/logs', serveIndexMiddleware, serveIndex('logs', { icons: true, view: 'details' })) // vuln-code-snippet vuln-line accessLogDisclosureChallenge
+
+MEDIUM: External control of filename or path detected. [CWE-73]
+https://docs.bearer.com/reference/rules/javascript_express_external_file_upload
+To exclude this finding, use the flag --exclude-fingerprint=8643fdcb8411f54a6af5a25deb2da818_0
+
+File: routes/keyServer.ts:14
+
+ 14       res.sendFile(path.resolve('encryptionkeys/', file))
+
+MEDIUM: External control of filename or path detected. [CWE-73]
+https://docs.bearer.com/reference/rules/javascript_express_external_file_upload
+To exclude this finding, use the flag --exclude-fingerprint=caf5b22a357fad021743f7b2b8da54b8_0
+
+File: routes/logfileServer.ts:14
+
+ 14       res.sendFile(path.resolve('logs/', file))
+
+MEDIUM: External control of filename or path detected. [CWE-73]
+https://docs.bearer.com/reference/rules/javascript_express_external_file_upload
+To exclude this finding, use the flag --exclude-fingerprint=684ac0da58fe48421abddc5208554ab4_0
+
+File: routes/quarantineServer.ts:14
+
+ 14       res.sendFile(path.resolve('ftp/quarantine/', file))
+
+MEDIUM: Unrevoked JWT detected. [CWE-525]
+https://docs.bearer.com/reference/rules/javascript_express_jwt_not_revoked
+To exclude this finding, use the flag --exclude-fingerprint=d5aa377b45e8572a3f1634b5411f5973_0
+
+File: lib/insecurity.ts:54
+
+ 54 export const isAuthorized = () => expressJwt(({ secret: publicKey }) as any)
+
+MEDIUM: Unrevoked JWT detected. [CWE-525]
+https://docs.bearer.com/reference/rules/javascript_express_jwt_not_revoked
+To exclude this finding, use the flag --exclude-fingerprint=d5aa377b45e8572a3f1634b5411f5973_1
+
+File: lib/insecurity.ts:55
+
+ 55 export const denyAll = () => expressJwt({ secret: '' + Math.random() } as any)
+
+MEDIUM: Manual HTML sanitization detected. [CWE-79]
+https://docs.bearer.com/reference/rules/javascript_lang_manual_html_sanitization
+To exclude this finding, use the flag --exclude-fingerprint=21de2a29f76880dbfbba700acb3cf4b4_0
+
+File: data/static/codefixes/redirectChallenge_3.ts:21
+
+ 21   return str.replace(/[&<>'"]/g,
+ 22     tag => {
+ 23       return ({
+            ...omitted (buffer value 3)
+ 28         '"': '&quot;'
+ 29       }[tag])
+ 30     })
+
+MEDIUM: Manual HTML sanitization detected. [CWE-79]
+https://docs.bearer.com/reference/rules/javascript_lang_manual_html_sanitization
+To exclude this finding, use the flag --exclude-fingerprint=d098ec6c1ec482df2422801759454ad2_0
+
+File: data/static/codefixes/restfulXssChallenge_2.ts:59
+
+ 59       tableData[i].description = tableData[i].description.replaceAll('<', '&lt;').replaceAll('>', '&gt;')
+
+MEDIUM: Weak hashing library (MD5) detected. [CWE-327, CWE-328]
+https://docs.bearer.com/reference/rules/javascript_lang_weak_hash_md5
+To exclude this finding, use the flag --exclude-fingerprint=21fa322fb6bf051a5864e6b1e84c7d36_0
+
+File: Gruntfile.js:74
+
+ 74       md5.update(buffer)
+
+MEDIUM: Weak hashing library (MD5) detected. [CWE-327, CWE-328]
+https://docs.bearer.com/reference/rules/javascript_lang_weak_hash_md5
+To exclude this finding, use the flag --exclude-fingerprint=42a76a8c10a52b38c1b8729a2f211830_0
+
+File: lib/insecurity.ts:43
+
+ 43 export const hash = (data: string) => crypto.createHash('md5').update(data).digest('hex')
+=====================================
+
+72 checks, 54 findings
+
+CRITICAL: 0
+HIGH: 22 (CWE-22, CWE-312, CWE-79, CWE-798, CWE-89, CWE-918)
+MEDIUM: 32 (CWE-327, CWE-328, CWE-525, CWE-548, CWE-73, CWE-79)
+LOW: 0
+WARNING: 0
+
+Need help or want to discuss the output? Join the Community https://discord.gg/eaHZBJUXRF
+
+Manage your findings directly on Bearer Cloud. Start now for free https://my.bearer.sh/users/sign_up or learn more https://docs.bearer.com/guides/bearer-cloud/
+
