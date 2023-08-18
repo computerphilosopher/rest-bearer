@@ -1,4 +1,4 @@
-package report_test
+package reporter_test
 
 import (
 	"io/ioutil"
@@ -6,7 +6,7 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/computerphilosopher/rest-bearer/pkg/report"
+	"github.com/computerphilosopher/rest-bearer/pkg/reporter"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -14,7 +14,7 @@ func TestMetaInfoParser(t *testing.T) {
 	assert := assert.New(t)
 
 	line := "MEDIUM: Insufficiently random value detected. [CWE-330]"
-	metaInfo, err := report.ParseMetaInfo(line)
+	metaInfo, err := reporter.ParseMetaInfo(line)
 
 	assert.Nil(err)
 	assert.Equal("MEDIUM", metaInfo.Severity)
@@ -26,7 +26,7 @@ func TestLocationParser(t *testing.T) {
 	assert := assert.New(t)
 
 	line := "File: src/main/java/net/spy/memcached/ArcusClientPool.java:76"
-	location, err := report.ParseLocation(line)
+	location, err := reporter.ParseLocation(line)
 
 	assert.Nil(err)
 	assert.Equal("src/main/java/net/spy/memcached/ArcusClientPool.java", location.Path)
@@ -37,7 +37,7 @@ func TestSnippetParser(t *testing.T) {
 	assert := assert.New(t)
 
 	line := "137     md5.update(KeyUtil.getKeyBytes(k));"
-	snippet, err := report.ParseSnippet(line)
+	snippet, err := reporter.ParseSnippet(line)
 
 	assert.Nil(err)
 	assert.Equal(snippet, "md5.update(KeyUtil.getKeyBytes(k));")
@@ -54,13 +54,13 @@ func TestVulnerabilityParser(t *testing.T) {
 		" 76     return client[rand.nextInt(poolSize)];",
 	}
 
-	expected := report.Vulnerability{
-		MetaInfo: report.MetaInfo{
+	expected := reporter.Vulnerability{
+		MetaInfo: reporter.MetaInfo{
 			Severity:    "MEDIUM",
 			Code:        "CWE-330",
 			Description: "Insufficiently random value detected.",
 		},
-		Location: report.Location{
+		Location: reporter.Location{
 			Path: "src/main/java/net/spy/memcached/ArcusClientPool.java",
 			Line: 76,
 		},
@@ -68,7 +68,7 @@ func TestVulnerabilityParser(t *testing.T) {
 		Snippet:   "return client[rand.nextInt(poolSize)];",
 	}
 
-	actual, next, err := report.ParseVulnerability(lines, 0)
+	actual, next, err := reporter.ParseVulnerability(lines, 0)
 	assert.Nil(err)
 	assert.Equal(expected, actual)
 	assert.Equal(next, 5)
@@ -95,14 +95,14 @@ func TestParseReport(t *testing.T) {
 	content, err := fileToString("test.txt")
 	assert.Nil(err)
 
-	rpt, err := report.ParseReport(content)
+	report, err := reporter.ParseReport(content)
 	assert.Nil(err)
-	assert.Equal(4, len(rpt))
+	assert.Equal(4, len(report))
 
 	content, err = fileToString("success.txt")
 	assert.Nil(err)
 
-	rpt, err = report.ParseReport(content)
+	report, err = reporter.ParseReport(content)
 	assert.Nil(err)
-	assert.Zero(len(rpt))
+	assert.Zero(len(report))
 }

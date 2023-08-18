@@ -1,4 +1,4 @@
-package report_test
+package reporter_test
 
 import (
 	"os"
@@ -6,8 +6,7 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/computerphilosopher/rest-bearer/pkg/report"
-
+	"github.com/computerphilosopher/rest-bearer/pkg/reporter"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -18,7 +17,7 @@ func TestReader(t *testing.T) {
 	pkgDir := filepath.Dir(filename)
 
 	repoDir := filepath.Join(pkgDir, "test")
-	reporter := report.NewDefaultReporter(repoDir)
+	reporter := reporter.NewDefaultReporter(repoDir)
 	//repo := reporter.Repository
 
 	//read from file
