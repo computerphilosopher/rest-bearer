@@ -6,6 +6,7 @@ import (
 	"runtime"
 	"testing"
 
+	"github.com/computerphilosopher/rest-bearer/pkg/gittypes"
 	"github.com/computerphilosopher/rest-bearer/pkg/reporter"
 	"github.com/stretchr/testify/assert"
 )
@@ -21,18 +22,27 @@ func TestReader(t *testing.T) {
 	//repo := reporter.Repository
 
 	//read from file
-	result, err := reporter.Read("tester", "js-repo", "6be94cd16db8a555f88290881daece882a4b677e")
+
+	commit := gittypes.Commit{
+		Repository: gittypes.Repository{
+			Owner: "tester",
+			Name:  "js-repo",
+		},
+		Id: "6be94cd16db8a555f88290881daece882a4b677e",
+	}
+
+	result, err := reporter.Read(commit)
 	assert.Nil(err)
 	assert.Contains(result, "WARNING")
 
 	//cache hit
-	result, err = reporter.Read("tester", "js-repo", "6be94cd16db8a555f88290881daece882a4b677e")
+	result, err = reporter.Read(commit)
 	assert.Nil(err)
 	assert.Contains(result, "WARNING")
 
-	err = reporter.Write("tester", "js-repo", "abcde", "report")
+	err = reporter.Write(commit, "report")
 	assert.Nil(err)
-	reportPath := filepath.Join(repoDir, "tester", "js-repo", "abcde")
+	reportPath := filepath.Join(repoDir, commit.Repository.Owner, commit.Repository.Name, commit.Id)
 	assert.FileExists(reportPath)
 
 	err = os.Remove(reportPath)
