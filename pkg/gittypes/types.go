@@ -1,7 +1,9 @@
 package gittypes
 
 import (
+	"context"
 	"fmt"
+	"os/exec"
 	"sync"
 )
 
@@ -16,7 +18,7 @@ type Commit struct {
 }
 
 type RepoManager interface {
-	Reset(commit Commit) error
+	Reset(ctx context.Context, baseDir string, commit Commit) error
 }
 type singletoneRepoManager struct {
 	mutexes sync.Map
@@ -38,22 +40,37 @@ func repoPath(repo Repository) string {
 	return repo.Owner + "/" + repo.Name
 }
 
-func (manager *singletoneRepoManager) Reset(baseDir string, commit Commit) error {
-	key := repoPath(commit.Repository)
-	mutexRaw, exist := manager.mutexes.Load(key)
+func (manager *singletoneRepoManager) loadMutex(key string) (*sync.RWMutex, error) {
+	raw, exist := manager.mutexes.Load(key)
 	if !exist {
-		newLock := &sync.RWMutex{}
-		manager.mutexes.Store(key, newLock)
-		mutexRaw = newLock
+		mutex := &sync.RWMutex{}
+		manager.mutexes.Store(key, mutex)
+		return mutex, nil
+	}
+	mutex, ok := raw.(*sync.RWMutex)
+	if !ok {
+		return nil,
+			fmt.Errorf("%s's lock type is wrong expected: mutex actual: %T",
+				key, raw)
+	}
+	manager.mutexes.Store(key, mutex)
+
+	return mutex, nil
+}
+
+func (manager *singletoneRepoManager) Reset(ctx context.Context, baseDir string, commit Commit) error {
+	key := repoPath(commit.Repository)
+
+	mutex, err := manager.loadMutex(key)
+	if err != nil {
+		return err
 	}
 
-	mutex, ok := mutexRaw.(*sync.RWMutex)
-	if !ok {
-		return fmt.Errorf("%s's lock type is wrong expected: mutex actual: %T",
-			key, mutexRaw)
-	}
 	mutex.Lock()
 	defer mutex.Unlock()
 
-	return nil
+	cmd := exec.CommandContext(ctx, "git", "reset", "--hard", commit.Id)
+	cmd.Dir = baseDir
+
+	return cmd.Run()
 }

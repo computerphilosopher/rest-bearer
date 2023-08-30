@@ -1,0 +1,3 @@
+[submodule "rest-bearer-test"]
+	path = rest-bearer-test
+	url = https://github.com/computerphilosopher/rest-bearer-test.git
