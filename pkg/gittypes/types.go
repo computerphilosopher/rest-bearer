@@ -40,13 +40,15 @@ func repoPath(repo Repository) string {
 	return repo.Owner + "/" + repo.Name
 }
 
-func (manager *singletoneRepoManager) loadMutex(key string) (*sync.RWMutex, error) {
+func (manager *singletoneRepoManager) loadMutex(repo Repository) (*sync.RWMutex, error) {
+	key := repoPath(repo)
 	raw, exist := manager.mutexes.Load(key)
 	if !exist {
 		mutex := &sync.RWMutex{}
 		manager.mutexes.Store(key, mutex)
 		return mutex, nil
 	}
+
 	mutex, ok := raw.(*sync.RWMutex)
 	if !ok {
 		return nil,
@@ -59,9 +61,7 @@ func (manager *singletoneRepoManager) loadMutex(key string) (*sync.RWMutex, erro
 }
 
 func (manager *singletoneRepoManager) Reset(ctx context.Context, baseDir string, commit Commit) error {
-	key := repoPath(commit.Repository)
-
-	mutex, err := manager.loadMutex(key)
+	mutex, err := manager.loadMutex(commit.Repository)
 	if err != nil {
 		return err
 	}
