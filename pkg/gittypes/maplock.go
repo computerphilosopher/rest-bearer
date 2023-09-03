@@ -9,7 +9,8 @@ type MapLock struct {
 	locks sync.Map
 }
 
-func (mapLock *MapLock) Load(key string) (*sync.RWMutex, error) {
+func (mapLock *MapLock) Load(repository Repository) (*sync.RWMutex, error) {
+	key := repository.ToString()
 	raw, exist := mapLock.locks.Load(key)
 	if !exist {
 		mutex := &sync.RWMutex{}

@@ -50,11 +50,10 @@ func (wrapper repomanagerWrapper) Clone(ctx context.Context, remote Remote) erro
 }
 
 func (manager *singletoneRepoManager) reset(ctx context.Context, baseDir string, commit Commit) error {
-	mutex, err := manager.locks.Load(commit.Repository.ToString())
+	mutex, err := manager.locks.Load(commit.Repository)
 	if err != nil {
 		return err
 	}
-
 	mutex.Lock()
 	defer mutex.Unlock()
 
@@ -78,5 +77,13 @@ func (manager *singletoneRepoManager) clone(ctx context.Context, baseDir string,
 	cmd := exec.CommandContext(ctx, "git", "clone", url)
 	cmd.Dir = baseDir
 
-	return cmd.Run()
+	mutex, err := manager.locks.Load(remote.Repository)
+	if err != nil {
+		return err
+	}
+	mutex.Lock()
+	defer mutex.Unlock()
+
+	err = cmd.Run()
+	return err
 }
