@@ -21,16 +21,15 @@ func TestReset(t *testing.T) {
 
 	assert := assert.New(t)
 
-	manager := gittypes.GetRepoManager()
-	assert.NotNil(manager)
-
 	_, filename, _, _ := runtime.Caller(0)
 	pkgDir := filepath.Dir(filename)
 	repoDir := filepath.Join(pkgDir, "../../rest-bearer-test")
 
+	manager := gittypes.GetRepoManager(repoDir)
+	assert.NotNil(manager)
+
 	err := manager.Reset(
 		context.TODO(),
-		repoDir,
 		gittypes.Commit{
 			Repository: gittypes.Repository{
 				Owner: "computerphilosopher",
@@ -65,32 +64,33 @@ func TestClone(t *testing.T) {
 
 	assert := assert.New(t)
 
-	manager := gittypes.GetRepoManager()
-	assert.NotNil(manager)
-
 	_, filename, _, _ := runtime.Caller(0)
 	pkgDir := filepath.Dir(filename)
-	repoDir := filepath.Join(pkgDir, "rest-bearer-test")
 
-	assert.False(manager.Exists(repoDir))
+	manager := gittypes.GetRepoManager(pkgDir)
+	assert.NotNil(manager)
+	repository := gittypes.Repository{
+		Owner: "computerphilosopher",
+		Name:  "rest-bearer-test",
+	}
+
+	assert.False(manager.Exists(repository))
 
 	remote := gittypes.Remote{
-		BaseUrl: "https://github.com",
-		Repository: gittypes.Repository{
-			Owner: "computerphilosopher",
-			Name:  "rest-bearer-test",
-		},
+		BaseUrl:    "https://github.com",
+		Repository: repository,
 	}
 
 	ctx, cancel := context.WithTimeout(context.TODO(), time.Second*20)
 	defer cancel()
-	err := manager.Clone(ctx, pkgDir, remote)
+	err := manager.Clone(ctx, remote)
 
 	if err != nil {
 		fmt.Println(err.Error())
 	}
 	assert.Nil(err)
 
+	repoDir := filepath.Join(pkgDir, "rest-bearer-test")
 	err = os.RemoveAll(repoDir)
 	assert.Nil(err)
 

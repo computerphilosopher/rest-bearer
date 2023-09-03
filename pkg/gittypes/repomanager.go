@@ -2,57 +2,55 @@ package gittypes
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"sync"
 )
 
 type RepoManager interface {
-	Reset(ctx context.Context, baseDir string, commit Commit) error
+	Reset(ctx context.Context, commit Commit) error
+	Exists(Repository) bool
+}
+
+type repomanagerWrapper struct {
+	baseDir string
+	manager *singletoneRepoManager
 }
 type singletoneRepoManager struct {
-	mutexes sync.Map
+	locks *MapLock
 }
 
 var instance *singletoneRepoManager = nil
 var once sync.Once
 
-func GetRepoManager() *singletoneRepoManager {
+func GetRepoManager(baseDir string) repomanagerWrapper {
 	once.Do(func() {
 		instance = &singletoneRepoManager{
-			mutexes: sync.Map{},
+			locks: &MapLock{},
 		}
 	})
-	return instance
-}
-
-func repoPath(repo Repository) string {
-	return repo.Owner + "/" + repo.Name
-}
-
-func (manager *singletoneRepoManager) loadMutex(repo Repository) (*sync.RWMutex, error) {
-	key := repoPath(repo)
-	raw, exist := manager.mutexes.Load(key)
-	if !exist {
-		mutex := &sync.RWMutex{}
-		manager.mutexes.Store(key, mutex)
-		return mutex, nil
+	return repomanagerWrapper{
+		baseDir: baseDir,
+		manager: instance,
 	}
-
-	mutex, ok := raw.(*sync.RWMutex)
-	if !ok {
-		return nil,
-			fmt.Errorf("%s's lock type is wrong expected: mutex actual: %T",
-				key, raw)
-	}
-	manager.mutexes.Store(key, mutex)
-
-	return mutex, nil
 }
 
-func (manager *singletoneRepoManager) Reset(ctx context.Context, baseDir string, commit Commit) error {
-	mutex, err := manager.loadMutex(commit.Repository)
+func (wrapper repomanagerWrapper) Reset(ctx context.Context, commit Commit) error {
+	return wrapper.manager.reset(ctx, wrapper.baseDir, commit)
+}
+
+func (wrapper repomanagerWrapper) Exists(repo Repository) bool {
+	repoDir := filepath.Join(wrapper.baseDir, repo.ToString())
+	return wrapper.manager.exists(repoDir)
+}
+
+func (wrapper repomanagerWrapper) Clone(ctx context.Context, remote Remote) error {
+	return wrapper.manager.clone(ctx, wrapper.baseDir, remote)
+}
+
+func (manager *singletoneRepoManager) reset(ctx context.Context, baseDir string, commit Commit) error {
+	mutex, err := manager.locks.Load(commit.Repository.ToString())
 	if err != nil {
 		return err
 	}
@@ -66,7 +64,7 @@ func (manager *singletoneRepoManager) Reset(ctx context.Context, baseDir string,
 	return cmd.Run()
 }
 
-func (manager *singletoneRepoManager) Exists(dir string) bool {
+func (manager *singletoneRepoManager) exists(dir string) bool {
 	stat, err := os.Stat(dir + ".git")
 	if !os.IsExist(err) {
 		return false
@@ -74,7 +72,7 @@ func (manager *singletoneRepoManager) Exists(dir string) bool {
 	return stat.IsDir()
 }
 
-func (manager *singletoneRepoManager) Clone(ctx context.Context, baseDir string, remote Remote) error {
+func (manager *singletoneRepoManager) clone(ctx context.Context, baseDir string, remote Remote) error {
 	url := remote.ToString()
 
 	cmd := exec.CommandContext(ctx, "git", "clone", url)
