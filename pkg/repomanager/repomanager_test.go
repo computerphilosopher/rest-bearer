@@ -1,4 +1,4 @@
-package gittypes_test
+package repomanager_test
 
 import (
 	"context"
@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/computerphilosopher/rest-bearer/pkg/gittypes"
+	"github.com/computerphilosopher/rest-bearer/pkg/repomanager"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -25,7 +26,7 @@ func TestReset(t *testing.T) {
 	pkgDir := filepath.Dir(filename)
 	repoDir := filepath.Join(pkgDir, "../../rest-bearer-test")
 
-	manager := gittypes.GetRepoManager(repoDir)
+	manager := repomanager.GetRepoManager(repoDir)
 	assert.NotNil(manager)
 
 	err := manager.Reset(
@@ -67,7 +68,7 @@ func TestClone(t *testing.T) {
 	_, filename, _, _ := runtime.Caller(0)
 	pkgDir := filepath.Dir(filename)
 
-	manager := gittypes.GetRepoManager(pkgDir)
+	manager := repomanager.GetRepoManager(pkgDir)
 	assert.NotNil(manager)
 	repository := gittypes.Repository{
 		Owner: "computerphilosopher",

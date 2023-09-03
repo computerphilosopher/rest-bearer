@@ -1,15 +1,27 @@
-package gittypes
+package maplock
 
 import (
 	"fmt"
 	"sync"
+
+	"github.com/computerphilosopher/rest-bearer/pkg/gittypes"
 )
 
 type MapLock struct {
 	locks sync.Map
 }
 
-func (mapLock *MapLock) Load(repository Repository) (*sync.RWMutex, error) {
+var instance *MapLock = nil
+var once sync.Once
+
+func GetMapLock() *MapLock {
+	once.Do(func() {
+		instance = &MapLock{}
+	})
+	return instance
+}
+
+func (mapLock *MapLock) Load(repository gittypes.Repository) (*sync.RWMutex, error) {
 	key := repository.ToString()
 	raw, exist := mapLock.locks.Load(key)
 	if !exist {

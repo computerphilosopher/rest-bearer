@@ -1,4 +1,4 @@
-package gittypes
+package repomanager
 
 import (
 	"context"
@@ -6,11 +6,14 @@ import (
 	"os/exec"
 	"path/filepath"
 	"sync"
+
+	"github.com/computerphilosopher/rest-bearer/pkg/gittypes"
+	"github.com/computerphilosopher/rest-bearer/pkg/maplock"
 )
 
 type RepoManager interface {
-	Reset(ctx context.Context, commit Commit) error
-	Exists(Repository) bool
+	Reset(ctx context.Context, commit gittypes.Commit) error
+	Exists(gittypes.Repository) bool
 }
 
 type repomanagerWrapper struct {
@@ -18,7 +21,7 @@ type repomanagerWrapper struct {
 	manager *singletoneRepoManager
 }
 type singletoneRepoManager struct {
-	locks *MapLock
+	locks *maplock.MapLock
 }
 
 var instance *singletoneRepoManager = nil
@@ -27,7 +30,7 @@ var once sync.Once
 func GetRepoManager(baseDir string) repomanagerWrapper {
 	once.Do(func() {
 		instance = &singletoneRepoManager{
-			locks: &MapLock{},
+			locks: maplock.GetMapLock(),
 		}
 	})
 	return repomanagerWrapper{
@@ -36,20 +39,20 @@ func GetRepoManager(baseDir string) repomanagerWrapper {
 	}
 }
 
-func (wrapper repomanagerWrapper) Reset(ctx context.Context, commit Commit) error {
+func (wrapper repomanagerWrapper) Reset(ctx context.Context, commit gittypes.Commit) error {
 	return wrapper.manager.reset(ctx, wrapper.baseDir, commit)
 }
 
-func (wrapper repomanagerWrapper) Exists(repo Repository) bool {
+func (wrapper repomanagerWrapper) Exists(repo gittypes.Repository) bool {
 	repoDir := filepath.Join(wrapper.baseDir, repo.ToString())
 	return wrapper.manager.exists(repoDir)
 }
 
-func (wrapper repomanagerWrapper) Clone(ctx context.Context, remote Remote) error {
+func (wrapper repomanagerWrapper) Clone(ctx context.Context, remote gittypes.Remote) error {
 	return wrapper.manager.clone(ctx, wrapper.baseDir, remote)
 }
 
-func (manager *singletoneRepoManager) reset(ctx context.Context, baseDir string, commit Commit) error {
+func (manager *singletoneRepoManager) reset(ctx context.Context, baseDir string, commit gittypes.Commit) error {
 	mutex, err := manager.locks.Load(commit.Repository)
 	if err != nil {
 		return err
@@ -71,7 +74,7 @@ func (manager *singletoneRepoManager) exists(dir string) bool {
 	return stat.IsDir()
 }
 
-func (manager *singletoneRepoManager) clone(ctx context.Context, baseDir string, remote Remote) error {
+func (manager *singletoneRepoManager) clone(ctx context.Context, baseDir string, remote gittypes.Remote) error {
 	url := remote.ToString()
 
 	cmd := exec.CommandContext(ctx, "git", "clone", url)
