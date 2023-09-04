@@ -17,8 +17,9 @@ func TestReader(t *testing.T) {
 	_, filename, _, _ := runtime.Caller(0)
 	pkgDir := filepath.Dir(filename)
 
-	repoDir := filepath.Join(pkgDir, "test")
-	reporter := reporter.NewDefaultReporter(repoDir)
+	reportDir := filepath.Join(pkgDir, "test")
+	repoDir := filepath.Join(pkgDir, "../../rest-bearer-test")
+	reporter := reporter.NewDefaultReporter(reportDir, repoDir)
 	//repo := reporter.Repository
 
 	//read from file
@@ -40,7 +41,7 @@ func TestReader(t *testing.T) {
 	assert.Nil(err)
 	assert.Contains(result, "WARNING")
 
-	err = reporter.Create(commit, "report")
+	err = reporter.Create(commit)
 	assert.Nil(err)
 	reportPath := filepath.Join(repoDir, commit.Repository.Owner, commit.Repository.Name, commit.Id)
 	assert.FileExists(reportPath)

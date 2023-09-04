@@ -14,7 +14,7 @@ import (
 
 type Reporter interface {
 	Read(commit gittypes.Commit) (string, error)
-	Write(commit gittypes.Commit, report string) error
+	Create(commit gittypes.Commit) error
 	Path(commit gittypes.Commit) string
 }
 
@@ -28,13 +28,14 @@ type fileReporter struct {
 	lock          *maplock.MapLock
 }
 
-func NewDefaultReporter(baseDir, repositoryDir string) Reporter {
+func NewDefaultReporter(reportDir, repositoryDir string) Reporter {
 	once.Do(func() {
 		reportCache = cache.New(5*time.Minute, 10*time.Minute)
 	})
 	return fileReporter{
-		ReportDir: baseDir,
-		lock:      maplock.GetMapLock(),
+		ReportDir:     reportDir,
+		RepositoryDir: repositoryDir,
+		lock:          maplock.GetMapLock(),
 	}
 }
 
