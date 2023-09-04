@@ -40,7 +40,7 @@ func TestReader(t *testing.T) {
 	assert.Nil(err)
 	assert.Contains(result, "WARNING")
 
-	err = reporter.Write(commit, "report")
+	err = reporter.Create(commit, "report")
 	assert.Nil(err)
 	reportPath := filepath.Join(repoDir, commit.Repository.Owner, commit.Repository.Name, commit.Id)
 	assert.FileExists(reportPath)
