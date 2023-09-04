@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/computerphilosopher/rest-bearer/pkg/gittypes"
+	"github.com/computerphilosopher/rest-bearer/pkg/maplock"
 	cache "github.com/patrickmn/go-cache"
 )
 
@@ -23,6 +24,7 @@ var once sync.Once
 // TODO: DBReporter
 type FileReporter struct {
 	BaseDir string
+	lock    *maplock.MapLock
 }
 
 func NewDefaultReporter(baseDir string) Reporter {
@@ -31,6 +33,7 @@ func NewDefaultReporter(baseDir string) Reporter {
 	})
 	return FileReporter{
 		BaseDir: baseDir,
+		lock:    maplock.GetMapLock(),
 	}
 }
 
