@@ -1,10 +1,12 @@
 package reporter_test
 
 import (
-	"os"
+	"context"
+	"fmt"
 	"path/filepath"
 	"runtime"
 	"testing"
+	"time"
 
 	"github.com/computerphilosopher/rest-bearer/pkg/gittypes"
 	"github.com/computerphilosopher/rest-bearer/pkg/reporter"
@@ -26,8 +28,8 @@ func TestReader(t *testing.T) {
 
 	commit := gittypes.Commit{
 		Repository: gittypes.Repository{
-			Owner: "tester",
-			Name:  "js-repo",
+			Owner: "computerphilosopher",
+			Name:  "rest-bearer-test",
 		},
 		Id: "6be94cd16db8a555f88290881daece882a4b677e",
 	}
@@ -41,11 +43,16 @@ func TestReader(t *testing.T) {
 	assert.Nil(err)
 	assert.Contains(result, "WARNING")
 
-	err = reporter.Create(commit)
+	ctx, cancel := context.WithTimeout(context.TODO(), time.Minute*5)
+	defer cancel()
+	err = reporter.Create(ctx, commit)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
 	assert.Nil(err)
-	reportPath := filepath.Join(repoDir, commit.Repository.Owner, commit.Repository.Name, commit.Id)
+	reportPath := filepath.Join(reportDir, commit.Repository.Owner, commit.Repository.Name, commit.Id)
 	assert.FileExists(reportPath)
 
-	err = os.Remove(reportPath)
-	assert.Nil(err)
+	//err = os.Remove(reportPath)
+	//assert.Nil(err)
 }

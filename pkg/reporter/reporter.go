@@ -1,8 +1,12 @@
 package reporter
 
 import (
+	"context"
+	"errors"
 	"fmt"
+	"io/fs"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"sync"
 	"time"
@@ -14,8 +18,8 @@ import (
 
 type Reporter interface {
 	Read(commit gittypes.Commit) (string, error)
-	Create(commit gittypes.Commit) error
 	Path(commit gittypes.Commit) string
+	Create(ctx context.Context, commit gittypes.Commit) error
 }
 
 var reportCache *cache.Cache
@@ -23,9 +27,9 @@ var once sync.Once
 
 // TODO: dbReporter
 type fileReporter struct {
-	ReportDir     string
-	RepositoryDir string
-	lock          *maplock.MapLock
+	reportDir string
+	gitDir    string
+	lock      *maplock.MapLock
 }
 
 func NewDefaultReporter(reportDir, repositoryDir string) Reporter {
@@ -33,9 +37,9 @@ func NewDefaultReporter(reportDir, repositoryDir string) Reporter {
 		reportCache = cache.New(5*time.Minute, 10*time.Minute)
 	})
 	return fileReporter{
-		ReportDir:     reportDir,
-		RepositoryDir: repositoryDir,
-		lock:          maplock.GetMapLock(),
+		reportDir: reportDir,
+		gitDir:    repositoryDir,
+		lock:      maplock.GetMapLock(),
 	}
 }
 
@@ -48,7 +52,7 @@ func cacheKey(commit gittypes.Commit) string {
 }
 
 func (reporter fileReporter) Path(commit gittypes.Commit) string {
-	return filepath.Join(reporter.ReportDir,
+	return filepath.Join(reporter.reportDir,
 		commit.Repository.Owner,
 		commit.Repository.Name,
 		commit.Id,
@@ -94,6 +98,31 @@ func (reporter fileReporter) Read(commit gittypes.Commit) (string, error) {
 	return report, err
 }
 
-func (reporter fileReporter) Write(commit gittypes.Commit, report string) error {
-	return os.WriteFile(reporter.Path(commit), []byte(report), 0644)
+func (reporter fileReporter) Create(ctx context.Context, commit gittypes.Commit) error {
+	//return os.WriteFile(reporter.Path(commit), []byte(report), 0644)
+	cmd := exec.CommandContext(ctx, "bearer", "scan", reporter.gitDir)
+	cmd.Dir = reporter.gitDir
+
+	output, err := func() ([]byte, error) {
+		output, err := cmd.CombinedOutput()
+		if err == nil {
+			return output, nil
+		}
+
+		var exitErr *exec.ExitError
+		if !errors.As(err, &exitErr) {
+			return nil, err
+		}
+		if exitErr.ExitCode() != 1 {
+			return nil, err
+		}
+
+		return output, nil
+	}()
+	if err != nil {
+		return err
+	}
+
+	path := reporter.Path(commit)
+	return os.WriteFile(path, output, fs.FileMode(os.O_RDWR))
 }
